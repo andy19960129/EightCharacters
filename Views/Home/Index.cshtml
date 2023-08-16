@@ -1,0 +1,255 @@
+﻿@using EightCharacters.Models.Enums
+@model EightCharacters.ViewModels.Home.IndexViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
+    var UpMainlist = ViewBag.UpMainlist as ICollection<SelectListItem>;
+    var DownBranchlist = ViewBag.DownBranchlist as ICollection<SelectListItem>;
+}
+
+<style>
+/*    table, th, td {
+        border: 1px solid;
+        text-align: center;
+    }
+
+    td {
+        height: 80px;
+    }*/
+</style>
+
+<form asp-action="Index">
+    <table class="table" style="border: 1px solid;text-align: center;">
+        <thead>
+            <tr>
+                <th></th>
+                <th>
+                    日元
+                </th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="height: 80px;">
+                <td>
+                    @Html.DropDownList("hourMainlist", UpMainlist, "請選擇",new { @style="height: 60px;font-size: 20px;" })
+                </td>
+                <td>
+                    @Html.DropDownList("dayMainlist", UpMainlist, "請選擇",new { @style="height: 60px;font-size: 20px;" })
+                </td>
+                <td>
+                    @Html.DropDownList("monthMainlist", UpMainlist, "請選擇",new { @style="height: 60px;font-size: 20px;" })
+                </td>
+                <td>
+                    @Html.DropDownList("yearMainlist", UpMainlist, "請選擇",new { @style="height: 60px;font-size: 20px;" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DropDownList("hourBranchlist", DownBranchlist, "請選擇",new { @style="height: 60px;font-size: 20px;" })
+                </td>
+                <td>
+                    @Html.DropDownList("dayBranchlist", DownBranchlist, "請選擇",new { @style="height: 60px;font-size: 20px;" })
+                </td>
+                <td>
+                    @Html.DropDownList("monthBranchlist", DownBranchlist, "請選擇",new { @style="height: 60px;font-size: 20px;" })
+                </td>
+                <td>
+                    @Html.DropDownList("yearBranchlist", DownBranchlist, "請選擇",new { @style="height: 60px;font-size: 20px;" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @if (Model is not null && Model.hourBranch is not null)
+                    {
+                        @for (var i = Model.hourBranch.upMains.Count()-1; i >= 0; i--)
+                        {
+                            <span style="font-size: 18px;"> @EnumExtenstion.GetDescription(Model.hourBranch.upMains.ElementAt(i).tenUpMain) </span>
+                        }
+                    }
+                </td>
+                <td>
+                    @if (Model is not null && Model.dayBranch is not null)
+                    {
+                        @for (var i = Model.dayBranch.upMains.Count() - 1; i >= 0; i--)
+                        {
+                            <span>@EnumExtenstion.GetDescription(Model.dayBranch.upMains.ElementAt(i).tenUpMain)</span>
+                        }
+                    }
+                </td>
+                <td>
+                    @if (Model is not null && Model.monthBranch is not null)
+                    {
+                        @for (var i = Model.monthBranch.upMains.Count() - 1; i >= 0; i--)
+                        {
+                            <span>@EnumExtenstion.GetDescription(Model.monthBranch.upMains.ElementAt(i).tenUpMain)</span>
+                        }
+                    }
+                </td>
+                <td>
+                    @if (Model is not null && Model.yearBranch is not null)
+                    {
+                        @for (var i = Model.yearBranch.upMains.Count() - 1; i >= 0; i--)
+                        {
+                            <span>@EnumExtenstion.GetDescription(Model.yearBranch.upMains.ElementAt(i).tenUpMain)</span>
+                        }
+                    }
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <input type="submit" value="計算" class="btn btn-primary" />
+</form>
+
+<br></br>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>天干強度：取扶抑用神</th>
+        </tr>
+        <tr>
+            <th>總和在 +-0.5 內不急著找扶抑用神</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (var i = 0; i < 10; i++)
+        {
+            <tr>
+                <td>
+                    <span>@UpMainlist.ElementAt(i).Text</span> = <span>@Model.tenUpMainEnergyProportion.ElementAt(i)</span> * (1 + 0.2 * <span>@Model.tenUpMainSeasonProportion.ElementAt(i)</span>) = <span>@Model.tenUpMainEnergyPower.ElementAt(i)</span>
+                </td>
+            </tr>
+        }
+        <tr>
+            <td>
+                總和：<span>@Model.totalEnergy</span>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<br></br>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th colspan="2">陰陽強度：取調候用神</th>
+        </tr>
+        <tr>
+            <th colspan="2">在 +-4 內不急著找調候用神</th>
+        </tr>
+        <tr>
+            <th colspan="2"> +7 以上最好找 癸、子，其次丑、壬、亥</th>
+        </tr>
+        <tr>
+            <th colspan="2"> -7 以下最好找 丙、巳，其次未、午、丁</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td colspan="2">
+                冷暖：<span>@Model.totalTemperature</span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table class="table">
+                    <tr>
+                        <td>甲</td>
+                        <td>3</td>
+                    </tr>
+                    <tr>
+                        <td>乙</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>丙</td>
+                        <td>7</td>
+                    </tr>
+                    <tr>
+                        <td>丁</td>
+                        <td>5</td>
+                    </tr>
+                    <tr>
+                        <td>戊</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>己</td>
+                        <td>-1</td>
+                    </tr>
+                    <tr>
+                        <td>庚</td>
+                        <td>-1</td>
+                    </tr>
+                    <tr>
+                        <td>辛</td>
+                        <td>-3</td>
+                    </tr>
+                    <tr>
+                        <td>壬</td>
+                        <td>-5</td>
+                    </tr>
+                    <tr>
+                        <td>癸</td>
+                        <td>-7</td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <table class="table">
+                    <tr>
+                        <td>寅</td>
+                        <td>3</td>
+                    </tr>
+                    <tr>
+                        <td>卯</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>辰</td>
+                        <td>2</td>
+                    </tr>
+                    <tr>
+                        <td>巳</td>
+                        <td>7</td>
+                    </tr>
+                    <tr>
+                        <td>午</td>
+                        <td>5</td>
+                    </tr>
+                    <tr>
+                        <td>未</td>
+                        <td>6</td>
+                    </tr>
+                    <tr>
+                        <td>申</td>
+                        <td>-1</td>
+                    </tr>
+                    <tr>
+                        <td>酉</td>
+                        <td>-3</td>
+                    </tr>
+                    <tr>
+                        <td>戌</td>
+                        <td>-2</td>
+                    </tr>
+                    <tr>
+                        <td>亥</td>
+                        <td>-5</td>
+                    </tr>
+                    <tr>
+                        <td>子</td>
+                        <td>-7</td>
+                    </tr>
+                    <tr>
+                        <td>丑</td>
+                        <td>-6</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>
